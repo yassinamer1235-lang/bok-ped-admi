@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080D18">
+    <title>BOK PEDRO | ADMIN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader"></div>
+        <h3>BOK PEDRO</h3>
+        <p>جارٍ تحميل لوحة الإدارة...</p>
+    </div>
+
+    <!-- Login Section -->
+    <section id="loginSection" class="login-section hidden">
+        <div class="login-card">
+
+            <div class="brand">
+                <div class="brand-logo">B</div>
+                <h1>BOK PEDRO</h1>
+                <p>ADMINISTRATION PANEL</p>
+            </div>
+
+            <div class="section-heading">
+                <h2>تسجيل دخول الإدارة</h2>
+                <p>يرجى إدخال بيانات المسؤول للمتابعة</p>
+            </div>
+
+            <form id="loginForm">
+
+                <label for="adminEmail">البريد الإلكتروني</label>
+                <input
+                    type="email"
+                    id="adminEmail"
+                    placeholder="البريد الإلكتروني"
+                    required
+                >
+
+                <label for="adminPassword">كلمة المرور</label>
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="كلمة المرور"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    تسجيل الدخول
+                </button>
+
+                <p id="loginError" class="error-message"></p>
+
+            </form>
+
+        </div>
+    </section>
+
+    <!-- Main Application -->
+    <div id="adminApp" class="admin-app hidden">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-brand">
+                <div class="brand-logo">B</div>
+                <div>
+                    <h2>BOK PEDRO</h2>
+                    <span>ADMIN PANEL</span>
+                </div>
+            </div>
+
+            <div class="admin-profile">
+                <div class="profile-avatar">A</div>
+                <div>
+                    <strong>المسؤول</strong>
+                    <small>مدير النظام</small>
+                </div>
+            </div>
+
+            <nav class="navigation">
+
+                <p class="nav-title">الرئيسية</p>
+
+                <button class="nav-item active" data-page="dashboard">
+                    لوحة التحكم
+                </button>
+
+                <p class="nav-title">إدارة الحسابات</p>
+
+                <button class="nav-item" data-page="users">
+                    المستخدمون
+                </button>
+
+                <button class="nav-item" data-page="requests">
+                    طلبات فتح الحسابات
+                    <span id="requestsBadge" class="nav-badge">0</span>
+                </button>
+
+                <button class="nav-item" data-page="subscriptions">
+                    الاشتراكات
+                </button>
+
+                <p class="nav-title">الإدارة المالية</p>
+
+                <button class="nav-item" data-page="balances">
+                    إدارة الأرصدة
+                </button>
+
+                <button class="nav-item" data-page="balanceLogs">
+                    سجل العمليات المالية
+                </button>
+
+                <p class="nav-title">الخدمات</p>
+
+                <button class="nav-item" data-page="beneficiaries">
+                    طلبات المستفيدين
+                </button>
+
+                <button class="nav-item" data-page="messages">
+                    الرسائل والإشعارات
+                </button>
+
+                <p class="nav-title">النظام</p>
+
+                <button class="nav-item" data-page="settings">
+                    إعدادات التطبيق
+                </button>
+
+            </nav>
+
+            <button id="logoutButton" class="logout-button">
+                تسجيل الخروج
+            </button>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Topbar -->
+            <header class="topbar">
+
+                <button id="menuButton" class="menu-button">
+                    ☰
+                </button>
+
+                <div class="topbar-title">
+                    <h2 id="pageTitle">لوحة التحكم</h2>
+                    <p>إدارة نظام BOK PEDRO</p>
+                </div>
+
+                <div class="topbar-status">
+                    <span class="status-dot"></span>
+                    النظام متصل
+                </div>
+
+            </header>
+
+            <div class="page-container">
+
+                <!-- Dashboard -->
+                <section class="page active" id="page-dashboard">
+
+                    <div class="welcome-section">
+                        <div>
+                            <h1>مرحباً بك في لوحة الإدارة</h1>
+                            <p>تحكم كامل في حسابات وخدمات BOK PEDRO</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+                            <span>إجمالي الحسابات</span>
+                            <strong id="totalUsers">0</strong>
+                        </div>
+
+                        <div class="stat-card">
+                            <span>الحسابات النشطة</span>
+                            <strong id="activeUsers">0</strong>
+                        </div>
+
+                        <div class="stat-card">
+                            <span>الحسابات الموقوفة</span>
+                            <strong id="disabledUsers">0</strong>
+                        </div>
+
+                        <div class="stat-card">
+                            <span>الحسابات المنتهية</span>
+                            <strong id="expiredUsers">0</strong>
+                        </div>
+
+                        <div class="stat-card">
+                            <span>طلبات جديدة</span>
+                            <strong id="totalRequests">0</strong>
+                        </div>
+
+                        <div class="stat-card">
+                            <span>طلبات المستفيدين</span>
+                            <strong id="totalBeneficiaries">0</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-heading">
+                            <h3>آخر طلبات فتح الحسابات</h3>
+                            <button class="text-button" data-page="requests">
+                                عرض الكل
+                            </button>
+                        </div>
+
+                        <div id="recentRequests">
+                            <p class="empty-state">لا توجد بيانات للعرض</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- Users -->
+                <section class="page" id="page-users">
+
+                    <div class="page-heading">
+                        <h2>إدارة المستخدمين</h2>
+                        <p>البحث عن الحسابات وإدارة حالتها</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                id="userSearch"
+                                placeholder="ابحث برقم الحساب أو اسم المستخدم..."
+                            >
+                            <button id="searchUserButton">بحث</button>
+                        </div>
+
+                        <div id="usersContainer">
+                            <p class="empty-state">ابحث عن حساب لعرض بياناته</p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- Requests -->
+                <section class="page" id="page-requests">
+
+                    <div class="page-heading">
+                        <h2>طلبات فتح الحسابات</h2>
+                        <p>مراجعة وإدارة طلبات المستخدمين</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                id="requestSearch"
+                                placeholder="البحث في الطلبات..."
+                            >
+                        </div>
+
+                        <div class="filter-row">
+                            <select id="requestFilter">
+                                <option value="all">جميع الطلبات</option>
+                                <option value="pending">قيد الانتظار</option>
+                                <option value="completed">مكتملة</option>
+                            </select>
+                        </div>
+
+                        <div id="requestsContainer">
+                            <p class="empty-state">جارٍ تحميل الطلبات...</p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- Subscriptions -->
+                <section class="page" id="page-subscriptions">
+
+                    <div class="page-heading">
+                        <h2>إدارة الاشتراكات</h2>
+                        <p>تفعيل وإيقاف وتجديد اشتراكات المستخدمين</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <input
+                            type="text"
+                            id="subscriptionSearch"
+                            placeholder="ابحث برقم الحساب..."
+                        >
+
+                        <button id="subscriptionSearchButton">
+                            بحث
+                        </button>
+
+                        <div id="subscriptionContainer"></div>
+
+                    </div>
+
+                </section>
+
+                <!-- Balances -->
+                <section class="page" id="page-balances">
+
+                    <div class="page-heading">
+                        <h2>إدارة الأرصدة</h2>
+                        <p>إضافة وخصم وتعديل أرصدة الحسابات</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <label>رقم الحساب</label>
+
+                        <div class="search-box">
+                            <input
+                                type="text"
+                                id="balanceAccount"
+                                placeholder="أدخل رقم الحساب"
+                            >
+                            <button id="balanceSearchButton">بحث</button>
+                        </div>
+
+                        <div id="balanceUserInfo"></div>
+
+                        <div id="balanceControls" class="hidden">
+
+                            <h3>الرصيد الحالي</h3>
+                            <strong id="currentBalance">0</strong>
+
+                            <label>المبلغ</label>
+                            <input
+                                type="number"
+                                id="balanceAmount"
+                                placeholder="أدخل المبلغ"
+                            >
+
+                            <div class="action-buttons">
+                                <button id="addBalanceButton">
+                                    إضافة رصيد
+                                </button>
+
+                                <button id="subtractBalanceButton">
+                                    خصم رصيد
+                                </button>
+
+                                <button id="setBalanceButton">
+                                    تعيين الرصيد
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- Balance Logs -->
+                <section class="page" id="page-balanceLogs">
+
+                    <div class="page-heading">
+                        <h2>سجل العمليات المالية</h2>
+                        <p>متابعة جميع عمليات الأرصدة</p>
+                    </div>
+
+                    <div class="content-card">
+                        <input
+                            type="text"
+                            id="logsSearch"
+                            placeholder="البحث برقم الحساب..."
+                        >
+
+                        <div id="balanceLogsContainer"></div>
+                    </div>
+
+                </section>
+
+                <!-- Beneficiaries -->
+                <section class="page" id="page-beneficiaries">
+
+                    <div class="page-heading">
+                        <h2>طلبات المستفيدين</h2>
+                        <p>مراجعة طلبات إضافة المستفيدين</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <select id="beneficiaryFilter">
+                            <option value="all">جميع الطلبات</option>
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="completed">مكتملة</option>
+                        </select>
+
+                        <div id="beneficiariesContainer"></div>
+
+                    </div>
+
+                </section>
+
+                <!-- Messages -->
+                <section class="page" id="page-messages">
+
+                    <div class="page-heading">
+                        <h2>الرسائل والإشعارات</h2>
+                        <p>إدارة الرسائل المرسلة لمستخدمي التطبيق</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <label>عنوان الرسالة</label>
+                        <input
+                            type="text"
+                            id="messageTitle"
+                            placeholder="عنوان الرسالة"
+                        >
+
+                        <label>محتوى الرسالة</label>
+                        <textarea
+                            id="messageContent"
+                            placeholder="اكتب الرسالة هنا..."
+                            rows="5"
+                        ></textarea>
+
+                        <button id="sendMessageButton">
+                            إرسال الرسالة
+                        </button>
+
+                        <div id="messagesContainer"></div>
+
+                    </div>
+
+                </section>
+
+                <!-- Settings -->
+                <section class="page" id="page-settings">
+
+                    <div class="page-heading">
+                        <h2>إعدادات التطبيق</h2>
+                        <p>التحكم في إعدادات وإصدارات التطبيق</p>
+                    </div>
+
+                    <div class="content-card">
+
+                        <label>رقم الإصدار</label>
+                        <input
+                            type="text"
+                            id="appVersion"
+                            placeholder="مثال: 2.0.0"
+                        >
+
+                        <label>رابط التحديث</label>
+                        <input
+                            type="url"
+                            id="appUpdateUrl"
+                            placeholder="رابط تحميل التطبيق"
+                        >
+
+                        <label>رسالة التحديث</label>
+                        <textarea
+                            id="appUpdateMessage"
+                            rows="4"
+                            placeholder="رسالة للمستخدمين..."
+                        ></textarea>
+
+                        <button id="saveSettingsButton">
+                            حفظ الإعدادات
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <footer class="footer">
+                <p>BOK PEDRO ADMINISTRATION</p>
+                <span>© 2026 جميع الحقوق محفوظة</span>
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden">
+        <span id="notificationText"></span>
+    </div>
+
+    <!-- Firebase and Application Logic -->
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
