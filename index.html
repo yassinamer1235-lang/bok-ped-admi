@@ -1,467 +1,445 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080D18">
-    <title>BOK PEDRO | ADMIN</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
+<title>BOK PEDRO | Update Control</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d18;color:#fff;
+ font-family:Arial,Tahoma,sans-serif;
+ padding:18px;
+}
+.container{max-width:650px;margin:35px auto}
+.card{
+ background:#111b2d;
+ border:1px solid #26364d;
+ border-radius:20px;
+ padding:24px;
+ margin-bottom:18px;
+}
+.logo{
+ font-size:25px;font-weight:bold;
+ color:#168bff;margin-bottom:8px;
+}
+.subtitle{color:#91a5c0;font-size:14px;line-height:1.8}
+h2{font-size:19px;margin-top:0}
+label{
+ display:block;margin:18px 0 9px;
+ color:#dce9f9;font-size:14px;
+}
+input,textarea{
+ width:100%;padding:14px;
+ border-radius:11px;
+ border:1px solid #30435e;
+ background:#091323;color:white;
+ font-size:15px;outline:none;
+}
+input:focus,textarea:focus{border-color:#168bff}
+textarea{min-height:145px;resize:vertical;line-height:1.9}
+button{
+ width:100%;padding:15px;
+ border:0;border-radius:11px;
+ background:#168bff;color:white;
+ font-size:15px;font-weight:bold;
+ margin-top:18px;cursor:pointer;
+}
+button.secondary{background:#26364d}
+button:disabled{opacity:.5}
+.check{
+ display:flex;align-items:center;gap:12px;
+ background:#091323;padding:15px;
+ border-radius:11px;margin-top:12px;
+}
+.check input{width:20px;height:20px;accent-color:#168bff}
+.check label{margin:0;flex:1}
+#dashboard{display:none}
+#status,#loginStatus{
+ margin-top:16px;font-size:14px;
+ line-height:1.9;overflow-wrap:anywhere;
+}
+.small{font-size:12px;color:#8196b2;line-height:1.8}
+.divider{height:1px;background:#26364d;margin:22px 0}
+.section-title{color:#168bff;font-weight:bold;margin-top:20px}
+</style>
 </head>
+
 <body>
 
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loader"></div>
-        <h3>BOK PEDRO</h3>
-        <p>جارٍ تحميل لوحة الإدارة...</p>
-    </div>
-
-    <!-- Login Section -->
-    <section id="loginSection" class="login-section hidden">
-        <div class="login-card">
-
-            <div class="brand">
-                <div class="brand-logo">B</div>
-                <h1>BOK PEDRO</h1>
-                <p>ADMINISTRATION PANEL</p>
-            </div>
-
-            <div class="section-heading">
-                <h2>تسجيل دخول الإدارة</h2>
-                <p>يرجى إدخال بيانات المسؤول للمتابعة</p>
-            </div>
-
-            <form id="loginForm">
-
-                <label for="adminEmail">البريد الإلكتروني</label>
-                <input
-                    type="email"
-                    id="adminEmail"
-                    placeholder="البريد الإلكتروني"
-                    required
-                >
+<div class="container">
 
-                <label for="adminPassword">كلمة المرور</label>
-                <input
-                    type="password"
-                    id="adminPassword"
-                    placeholder="كلمة المرور"
-                    required
-                >
+<!-- LOGIN -->
 
-                <button type="submit" id="loginButton">
-                    تسجيل الدخول
-                </button>
+<div class="card" id="login">
 
-                <p id="loginError" class="error-message"></p>
-
-            </form>
+<div class="logo">BOK PEDRO</div>
+<div class="subtitle">لوحة التحكم بإعدادات تحديث التطبيق</div>
 
-        </div>
-    </section>
+<div class="divider"></div>
 
-    <!-- Main Application -->
-    <div id="adminApp" class="admin-app hidden">
+<label>البريد الإلكتروني للمدير</label>
+<input type="email" id="email" placeholder="Admin Email">
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+<label>كلمة المرور</label>
+<input type="password" id="password" placeholder="Password">
 
-            <div class="sidebar-brand">
-                <div class="brand-logo">B</div>
-                <div>
-                    <h2>BOK PEDRO</h2>
-                    <span>ADMIN PANEL</span>
-                </div>
-            </div>
+<button id="loginBtn" onclick="loginAdmin()">تسجيل الدخول</button>
 
-            <div class="admin-profile">
-                <div class="profile-avatar">A</div>
-                <div>
-                    <strong>المسؤول</strong>
-                    <small>مدير النظام</small>
-                </div>
-            </div>
+<div id="loginStatus"></div>
 
-            <nav class="navigation">
+</div>
 
-                <p class="nav-title">الرئيسية</p>
+<!-- DASHBOARD -->
 
-                <button class="nav-item active" data-page="dashboard">
-                    لوحة التحكم
-                </button>
+<div id="dashboard">
 
-                <p class="nav-title">إدارة الحسابات</p>
+<div class="card">
 
-                <button class="nav-item" data-page="users">
-                    المستخدمون
-                </button>
-
-                <button class="nav-item" data-page="requests">
-                    طلبات فتح الحسابات
-                    <span id="requestsBadge" class="nav-badge">0</span>
-                </button>
+<div class="logo">BOK PEDRO</div>
+<div class="subtitle">إدارة التحديثات والتحكم في وصول المستخدمين</div>
 
-                <p class="nav-title">الإدارة المالية</p>
-
-                <button class="nav-item" data-page="balances">
-                    إدارة الأرصدة
-                </button>
-
-                <button class="nav-item" data-page="balanceLogs">
-                    سجل العمليات المالية
-                </button>
+<div class="divider"></div>
 
-                <p class="nav-title">الخدمات</p>
+<div class="section-title">التحكم العام</div>
 
-                <button class="nav-item" data-page="beneficiaries">
-                    طلبات المستفيدين
-                </button>
+<div class="check">
+<input type="checkbox" id="enabled">
+<label for="enabled">تفعيل فحص التحديث</label>
+</div>
 
-                <button class="nav-item" data-page="messages">
-                    الرسائل والإشعارات
-                </button>
+<div class="check">
+<input type="checkbox" id="force_update">
+<label for="force_update">فرض التحديث الإجباري</label>
+</div>
 
-                <p class="nav-title">النظام</p>
+<label>الحد الأدنى للإصدار minimum_version</label>
+<input type="number" id="minimum_version" min="0" step="1">
 
-                <button class="nav-item" data-page="settings">
-                    إعدادات التطبيق
-                </button>
+<p class="small">
+الإصدارات الأقل من هذا الرقم سيتم رفضها إذا كان كود التطبيق يطبق هذا الشرط.
+</p>
 
-            </nav>
+<div class="divider"></div>
 
-            <button id="logoutButton" class="logout-button">
-                تسجيل الخروج
-            </button>
+<div class="section-title">رسالة المستخدم</div>
 
-        </aside>
+<label>رسالة التحديث أو الصيانة</label>
+<textarea id="message"></textarea>
 
-        <!-- Main Content -->
-        <main class="main-content">
+<div class="divider"></div>
 
-            <!-- Topbar -->
-            <header class="topbar">
+<div class="section-title">بيانات الإصدار القديمة</div>
 
-                <button id="menuButton" class="menu-button">
-                    ☰
-                </button>
+<label>رابط التطبيق apkUrl</label>
+<input type="text" id="apkUrl">
 
-                <div class="topbar-title">
-                    <h2 id="pageTitle">لوحة التحكم</h2>
-                    <p>إدارة نظام BOK PEDRO</p>
-                </div>
+<label>رقم الإصدار version</label>
+<input type="text" id="version">
 
-                <div class="topbar-status">
-                    <span class="status-dot"></span>
-                    النظام متصل
-                </div>
+<label>رقم Version Code</label>
+<input type="number" id="versionCode" min="0" step="1">
 
-            </header>
+<button id="saveBtn" onclick="saveSettings()">حفظ التعديلات</button>
 
-            <div class="page-container">
+<button class="secondary" onclick="loadSettings()">إعادة تحميل البيانات</button>
 
-                <!-- Dashboard -->
-                <section class="page active" id="page-dashboard">
+<button class="secondary" onclick="logoutAdmin()">تسجيل الخروج</button>
 
-                    <div class="welcome-section">
-                        <div>
-                            <h1>مرحباً بك في لوحة الإدارة</h1>
-                            <p>تحكم كامل في حسابات وخدمات BOK PEDRO</p>
-                        </div>
-                    </div>
+<div id="status"></div>
 
-                    <div class="stats-grid">
+</div>
+</div>
 
-                        <div class="stat-card">
-                            <span>إجمالي الحسابات</span>
-                            <strong id="totalUsers">0</strong>
-                        </div>
+</div>
 
-                        <div class="stat-card">
-                            <span>الحسابات النشطة</span>
-                            <strong id="activeUsers">0</strong>
-                        </div>
+<script>
 
-                        <div class="stat-card">
-                            <span>الحسابات الموقوفة</span>
-                            <strong id="disabledUsers">0</strong>
-                        </div>
+// ==========================================
+// FIREBASE CONFIG - BOK-PED
+// ==========================================
 
-                        <div class="stat-card">
-                            <span>طلبات جديدة</span>
-                            <strong id="totalRequests">0</strong>
-                        </div>
+var firebaseConfig = {
+ apiKey: "AIzaSyDnvmRTgZl1p325V3TmCjIH-PnPfjJPPpk",
+ authDomain: "bok-ped.firebaseapp.com",
+ databaseURL: "https://bok-ped-default-rtdb.firebaseio.com",
+ projectId: "bok-ped",
+ storageBucket: "bok-ped.firebasestorage.app",
+ messagingSenderId: "812838230843",
+ appId: "1:812838230843:web:f3bd5f59343db42b52b51e",
+ measurementId: "G-26SMZR0QCC"
+};
 
-                        <div class="stat-card">
-                            <span>طلبات المستفيدين</span>
-                            <strong id="totalBeneficiaries">0</strong>
-                        </div>
+firebase.initializeApp(firebaseConfig);
 
-                    </div>
+var auth = firebase.auth();
+var db = firebase.database();
 
-                    <div class="content-card">
-                        <div class="card-heading">
-                            <h3>آخر طلبات فتح الحسابات</h3>
-                            <button class="text-button" data-page="requests">
-                                عرض الكل
-                            </button>
-                        </div>
+// ==========================================
+// ADMIN UID
+// ==========================================
 
-                        <div id="recentRequests">
-                            <p class="empty-state">لا توجد بيانات للعرض</p>
-                        </div>
-                    </div>
+var ADMIN_UID = "zuwXPgS4TPYF5GyAYEPEOrsYV0z1";
 
-                </section>
+// ==========================================
+// DATABASE PATH
+// ==========================================
 
-                <!-- Users -->
-                <section class="page" id="page-users">
+var updateRef = db.ref("app_update");
 
-                    <div class="page-heading">
-                        <h2>إدارة المستخدمين</h2>
-                        <p>البحث عن الحسابات وإدارة حالتها</p>
-                    </div>
+// ==========================================
+// LOGIN
+// ==========================================
 
-                    <div class="content-card">
+function loginAdmin(){
 
-                        <div class="search-box">
-                            <input
-                                type="text"
-                                id="userSearch"
-                                placeholder="ابحث برقم الحساب أو اسم المستخدم..."
-                            >
-                            <button id="searchUserButton">بحث</button>
-                        </div>
+ var email = document.getElementById("email").value.trim();
+ var password = document.getElementById("password").value;
+ var btn = document.getElementById("loginBtn");
 
-                        <div id="usersContainer">
-                            <p class="empty-state">ابحث عن حساب لعرض بياناته</p>
-                        </div>
+ if(!email || !password){
+   document.getElementById("loginStatus").innerText =
+   "يرجى إدخال البريد الإلكتروني وكلمة المرور";
+   return;
+ }
 
-                    </div>
+ btn.disabled = true;
+ btn.innerText = "جارٍ تسجيل الدخول...";
 
-                </section>
+ auth.signInWithEmailAndPassword(email,password)
+ .then(function(result){
 
-                <!-- Requests -->
-                <section class="page" id="page-requests">
+   if(result.user.uid !== ADMIN_UID){
+     return auth.signOut().then(function(){
+       throw new Error("هذا الحساب غير مصرح له بإدارة النظام");
+     });
+   }
 
-                    <div class="page-heading">
-                        <h2>طلبات فتح الحسابات</h2>
-                        <p>مراجعة وإدارة طلبات المستخدمين</p>
-                    </div>
+   showDashboard();
 
-                    <div class="content-card">
+ })
+ .catch(function(error){
 
-                        <div class="search-box">
-                            <input
-                                type="text"
-                                id="requestSearch"
-                                placeholder="البحث في الطلبات..."
-                            >
-                        </div>
+   document.getElementById("loginStatus").innerText =
+   "فشل تسجيل الدخول: " + error.message;
 
-                        <div class="filter-row">
-                            <select id="requestFilter">
-                                <option value="all">جميع الطلبات</option>
-                                <option value="pending">قيد الانتظار</option>
-                                <option value="completed">مكتملة</option>
-                            </select>
-                        </div>
+ })
+ .then(function(){
 
-                        <div id="requestsContainer">
-                            <p class="empty-state">جارٍ تحميل الطلبات...</p>
-                        </div>
+   btn.disabled = false;
+   btn.innerText = "تسجيل الدخول";
 
-                    </div>
+ },function(){
 
-                </section>
+   btn.disabled = false;
+   btn.innerText = "تسجيل الدخول";
 
-                <!-- Balances -->
-                <section class="page" id="page-balances">
+ });
 
-                    <div class="page-heading">
-                        <h2>إدارة الأرصدة</h2>
-                        <p>إضافة وخصم وتعديل أرصدة الحسابات</p>
-                    </div>
+}
 
-                    <div class="content-card">
+// ==========================================
+// SHOW DASHBOARD
+// ==========================================
 
-                        <label>رقم الحساب</label>
+function showDashboard(){
 
-                        <div class="search-box">
-                            <input
-                                type="text"
-                                id="balanceAccount"
-                                placeholder="أدخل رقم الحساب"
-                            >
-                            <button id="balanceSearchButton">بحث</button>
-                        </div>
+ var user = auth.currentUser;
 
-                        <div id="balanceUserInfo"></div>
+ if(!user || user.uid !== ADMIN_UID){
+   auth.signOut();
+   return;
+ }
 
-                        <div id="balanceControls" class="hidden">
+ document.getElementById("login").style.display = "none";
+ document.getElementById("dashboard").style.display = "block";
 
-                            <h3>الرصيد الحالي</h3>
-                            <strong id="currentBalance">0</strong>
+ loadSettings();
 
-                            <label>المبلغ</label>
-                            <input
-                                type="number"
-                                id="balanceAmount"
-                                placeholder="أدخل المبلغ"
-                            >
+}
 
-                            <div class="action-buttons">
-                                <button id="addBalanceButton">
-                                    إضافة رصيد
-                                </button>
+// ==========================================
+// AUTH STATE
+// ==========================================
 
-                                <button id="subtractBalanceButton">
-                                    خصم رصيد
-                                </button>
+auth.onAuthStateChanged(function(user){
 
-                                <button id="setBalanceButton">
-                                    تعيين الرصيد
-                                </button>
-                            </div>
+ if(user){
 
-                        </div>
+   if(user.uid === ADMIN_UID){
+     showDashboard();
+   }else{
+     auth.signOut();
+   }
 
-                    </div>
+ }else{
 
-                </section>
+   document.getElementById("dashboard").style.display = "none";
+   document.getElementById("login").style.display = "block";
 
-                <!-- Balance Logs -->
-                <section class="page" id="page-balanceLogs">
+ }
 
-                    <div class="page-heading">
-                        <h2>سجل العمليات المالية</h2>
-                        <p>متابعة جميع عمليات الأرصدة</p>
-                    </div>
+});
 
-                    <div class="content-card">
-                        <input
-                            type="text"
-                            id="logsSearch"
-                            placeholder="البحث برقم الحساب..."
-                        >
+// ==========================================
+// LOAD SETTINGS
+// ==========================================
 
-                        <div id="balanceLogsContainer"></div>
-                    </div>
+function loadSettings(){
 
-                </section>
+ document.getElementById("status").innerText =
+ "جارٍ تحميل البيانات...";
 
-                <!-- Beneficiaries -->
-                <section class="page" id="page-beneficiaries">
+ updateRef.once("value")
+ .then(function(snapshot){
 
-                    <div class="page-heading">
-                        <h2>طلبات المستفيدين</h2>
-                        <p>مراجعة طلبات إضافة المستفيدين</p>
-                    </div>
+   var data = snapshot.val() || {};
 
-                    <div class="content-card">
+   document.getElementById("enabled").checked =
+   data.enabled === true;
 
-                        <select id="beneficiaryFilter">
-                            <option value="all">جميع الطلبات</option>
-                            <option value="pending">قيد المراجعة</option>
-                            <option value="completed">مكتملة</option>
-                        </select>
+   document.getElementById("force_update").checked =
+   data.force_update === true;
 
-                        <div id="beneficiariesContainer"></div>
+   document.getElementById("minimum_version").value =
+   data.minimum_version != null ? data.minimum_version : 0;
 
-                    </div>
+   document.getElementById("message").value =
+   data.message || "";
 
-                </section>
+   document.getElementById("apkUrl").value =
+   data.apkUrl || "";
 
-                <!-- Messages -->
-                <section class="page" id="page-messages">
+   document.getElementById("version").value =
+   data.version != null ? data.version : "";
 
-                    <div class="page-heading">
-                        <h2>الرسائل والإشعارات</h2>
-                        <p>إدارة الرسائل المرسلة لمستخدمي التطبيق</p>
-                    </div>
+   document.getElementById("versionCode").value =
+   data.versionCode != null ? data.versionCode : 1;
 
-                    <div class="content-card">
+   document.getElementById("status").innerText =
+   "تم تحميل إعدادات التطبيق بنجاح";
 
-                        <label>عنوان الرسالة</label>
-                        <input
-                            type="text"
-                            id="messageTitle"
-                            placeholder="عنوان الرسالة"
-                        >
+ })
+ .catch(function(error){
 
-                        <label>محتوى الرسالة</label>
-                        <textarea
-                            id="messageContent"
-                            placeholder="اكتب الرسالة هنا..."
-                            rows="5"
-                        ></textarea>
+   document.getElementById("status").innerText =
+   "خطأ في تحميل البيانات: " + error.message;
 
-                        <button id="sendMessageButton">
-                            إرسال الرسالة
-                        </button>
+ });
 
-                        <div id="messagesContainer"></div>
+}
 
-                    </div>
+// ==========================================
+// SAVE SETTINGS
+// ==========================================
 
-                </section>
+function saveSettings(){
 
-                <!-- Settings -->
-                <section class="page" id="page-settings">
+ var user = auth.currentUser;
 
-                    <div class="page-heading">
-                        <h2>إعدادات التطبيق</h2>
-                        <p>التحكم في إعدادات وإصدارات التطبيق</p>
-                    </div>
+ if(!user || user.uid !== ADMIN_UID){
+   alert("غير مصرح لك بالحفظ");
+   return;
+ }
 
-                    <div class="content-card">
+ var minimum = Number(
+ document.getElementById("minimum_version").value
+ );
 
-                        <label>رقم الإصدار</label>
-                        <input
-                            type="text"
-                            id="appVersion"
-                            placeholder="مثال: 2.0.0"
-                        >
+ var versionCode = Number(
+ document.getElementById("versionCode").value
+ );
 
-                        <label>رابط التحديث</label>
-                        <input
-                            type="url"
-                            id="appUpdateUrl"
-                            placeholder="رابط تحميل التطبيق"
-                        >
+ if(!Number.isSafeInteger(minimum) || minimum < 0){
+   alert("قيمة minimum_version غير صحيحة");
+   return;
+ }
 
-                        <label>رسالة التحديث</label>
-                        <textarea
-                            id="appUpdateMessage"
-                            rows="4"
-                            placeholder="رسالة للمستخدمين..."
-                        ></textarea>
+ if(!Number.isSafeInteger(versionCode) || versionCode < 0){
+   alert("قيمة versionCode غير صحيحة");
+   return;
+ }
 
-                        <button id="saveSettingsButton">
-                            حفظ الإعدادات
-                        </button>
+ var data = {
 
-                    </div>
+   enabled: document.getElementById("enabled").checked,
 
-                </section>
+   minimum_version: minimum,
 
-            </div>
+   force_update: document.getElementById("force_update").checked,
 
-            <footer class="footer">
-                <p>BOK PEDRO ADMINISTRATION</p>
-                <span>© 2026 جميع الحقوق محفوظة</span>
-            </footer>
+   message: document.getElementById("message").value,
 
-        </main>
+   apkUrl: document.getElementById("apkUrl").value.trim(),
 
-    </div>
+   version: document.getElementById("version").value.trim(),
 
-    <!-- Notification -->
-    <div id="notification" class="notification hidden">
-        <span id="notificationText"></span>
-    </div>
+   versionCode: versionCode,
 
-    <!-- Firebase and Application Logic -->
-    <script type="module" src="app.js"></script>
+   updatedAt: firebase.database.ServerValue.TIMESTAMP,
+
+   updatedBy: user.uid
+
+ };
+
+ var btn = document.getElementById("saveBtn");
+
+ btn.disabled = true;
+ btn.innerText = "جارٍ الحفظ...";
+
+ document.getElementById("status").innerText =
+ "جارٍ حفظ البيانات في Firebase...";
+
+ updateRef.update(data)
+ .then(function(){
+
+   document.getElementById("status").innerText =
+   "تم حفظ التعديلات بنجاح. الحقول القديمة الأخرى محفوظة.";
+
+ })
+ .catch(function(error){
+
+   document.getElementById("status").innerText =
+   "فشل الحفظ: " + error.message;
+
+ })
+ .then(function(){
+
+   btn.disabled = false;
+   btn.innerText = "حفظ التعديلات";
+
+ },function(){
+
+   btn.disabled = false;
+   btn.innerText = "حفظ التعديلات";
+
+ });
+
+}
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function logoutAdmin(){
+
+ auth.signOut().then(function(){
+
+   document.getElementById("dashboard").style.display = "none";
+   document.getElementById("login").style.display = "block";
+
+ });
+
+}
+
+</script>
 
 </body>
 </html>
