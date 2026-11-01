@@ -127,6 +127,13 @@ button:disabled{opacity:.5}
 الإصدارات الأقل من هذا الرقم سيتم رفضها إذا كان كود التطبيق يطبق هذا الشرط.
 </p>
 
+<label>أحدث إصدار latest_version</label>
+<input type="number" id="latest_version" min="0" step="1">
+
+<p class="small">
+رقم الإصدار الذي يقارن به التطبيق الإصدار المثبت لتحديد وجود تحديث إجباري.
+</p>
+
 <div class="divider"></div>
 
 <div class="section-title">رسالة المستخدم</div>
@@ -311,6 +318,10 @@ function loadSettings(){
    document.getElementById("minimum_version").value =
    data.minimum_version != null ? data.minimum_version : 0;
 
+   document.getElementById("latest_version").value =
+   data.latest_version != null ? data.latest_version :
+   (data.versionCode != null ? data.versionCode : 1);
+
    document.getElementById("message").value =
    data.message || "";
 
@@ -353,12 +364,21 @@ function saveSettings(){
  document.getElementById("minimum_version").value
  );
 
+ var latest = Number(
+ document.getElementById("latest_version").value
+ );
+
  var versionCode = Number(
  document.getElementById("versionCode").value
  );
 
  if(!Number.isSafeInteger(minimum) || minimum < 0){
    alert("قيمة minimum_version غير صحيحة");
+   return;
+ }
+
+ if(!Number.isSafeInteger(latest) || latest < 0){
+   alert("قيمة latest_version غير صحيحة");
    return;
  }
 
@@ -372,6 +392,8 @@ function saveSettings(){
    enabled: document.getElementById("enabled").checked,
 
    minimum_version: minimum,
+
+   latest_version: latest,
 
    force_update: document.getElementById("force_update").checked,
 
@@ -440,6 +462,5 @@ function logoutAdmin(){
 }
 
 </script>
-
 </body>
 </html>
